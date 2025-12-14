@@ -1,0 +1,51 @@
+<div
+  id="authModal"
+  class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4"
+>
+  <div class="bg-white rounded-2xl max-w-md w-full p-8 relative">
+
+    <button
+      onclick="closeAuthModal()"
+      class="absolute top-4 right-4 p-2 hover:bg-neutral-100 rounded-lg"
+    >
+      ✕
+    </button>
+
+    <h2 id="authTitle" class="text-xl font-semibold mb-6">
+      Welcome Back
+    </h2>
+
+    <form onsubmit="submitAuth(event)" class="space-y-4">
+
+      <div id="nameField" class="hidden">
+        <label class="block mb-2">Full Name</label>
+        <input id="authName" class="w-full px-4 py-3 border rounded-lg">
+      </div>
+
+      <div>
+        <label class="block mb-2">Email</label>
+        <input id="authEmail" class="w-full px-4 py-3 border rounded-lg">
+      </div>
+
+      <div>
+        <label class="block mb-2">Password</label>
+        <input id="authPassword" type="password" class="w-full px-4 py-3 border rounded-lg">
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-3 bg-orange-600 text-white rounded-lg"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <p class="text-center mt-6 text-sm">
+      <span id="switchText">Don't have an account?</span>
+      <button onclick="switchAuthMode()" class="text-orange-600">
+        Sign Up
+      </button>
+    </p>
+
+  </div>
+</div>

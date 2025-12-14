@@ -26,6 +26,10 @@ def menu(request):
     items = Menu.objects.filter(is_available=True)
     return render(request, 'pages/menu.html', {'items': items})
 
+# Auth page
+def auth(request):
+   
+    return render(request, 'pages/auth.html')
 
 # Menu item page
 def display_menu_item(request, pk=None):

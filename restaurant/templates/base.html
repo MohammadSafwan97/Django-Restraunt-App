@@ -1,51 +1,138 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Little Lemon</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Little Lemon</title>
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Optional Tailwind custom config -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["Inter", "sans-serif"],
-            },
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
           },
         },
-      };
-    </script>
+      },
+    };
+  </script>
 
-    <!-- Optional custom CSS file -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  </head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
 
-  <body class="bg-white text-slate-900 antialiased">
-    <!-- Header / Navigation -->
-    <header class="w-full py-4 border-b border-slate-200 bg-white">
-      <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-        <h1 class="text-lg font-semibold tracking-tight">Little Lemon</h1>
+<body class="bg-white text-slate-900 antialiased">
 
-        <nav class="flex gap-6 text-sm">
-          <a href="/" class="hover:text-amber-600">Home</a>
-          <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a>
-          <a href="{% url 'book' %}" class="hover:text-amber-600">Book Table</a>
-        </nav>
-      </div>
-    </header>
+  <!-- HEADER -->
+  <header class="w-full py-4 border-b border-slate-200 bg-white">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
 
-    <!-- Page Content -->
-    <main>{% block content %} {% endblock %}</main>
+      <!-- Logo -->
+      <a href="/" class="text-lg font-semibold tracking-tight">
+        Little Lemon
+      </a>
 
-    <!-- Footer -->
-    <footer class="mt-20 py-8 text-center text-sm text-slate-500 border-t">
-      © {% now "Y" %} Little Lemon Restaurant
-    </footer>
-  </body>
+      <!-- Navigation -->
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="/" class="hover:text-amber-600">Home</a>
+        <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a>
+        <a href="{% url 'book' %}" class="hover:text-amber-600">Book Table</a>
+
+        <!-- AUTH BUTTONS -->
+        <button
+          onclick="openAuthModal('login')"
+          class="px-4 py-2 border rounded-lg hover:bg-slate-100 transition"
+        >
+          Login
+        </button>
+
+        <button
+          onclick="openAuthModal('signup')"
+          class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition"
+        >
+          Sign Up
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- AUTH MODAL -->
+  {% include "partials/auth_modal.html" %}
+
+  <!-- FOOTER -->
+  <footer class="mt-20 py-8 text-center text-sm text-slate-500 border-t">
+    © {% now "Y" %} Little Lemon Restaurant
+  </footer>
+
+  <!-- AUTH JS -->
+  <script>
+  let authMode = "login"; // login | signup
+
+  function openAuthModal(mode = "login") {
+    authMode = mode;
+    const modal = document.getElementById("authModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    updateAuthUI();
+  }
+
+  function closeAuthModal() {
+    const modal = document.getElementById("authModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  function switchAuthMode() {
+    authMode = authMode === "login" ? "signup" : "login";
+    updateAuthUI();
+  }
+
+  function updateAuthUI() {
+    const isLogin = authMode === "login";
+
+    document.getElementById("authTitle").textContent =
+      isLogin ? "Welcome Back" : "Create Account";
+
+    document.getElementById("nameField").classList.toggle("hidden", isLogin);
+
+    document.getElementById("switchText").textContent =
+      isLogin ? "Don't have an account?" : "Already have an account?";
+
+    document.querySelector("button[type='submit']").textContent =
+      isLogin ? "Sign In" : "Create Account";
+  }
+
+  function submitAuth(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("authName").value.trim();
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value.trim();
+
+    if (!email || !password || (authMode === "signup" && !name)) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    alert(
+      authMode === "login"
+        ? `Logging in as ${email}`
+        : `Signing up ${name} (${email})`
+    );
+
+    closeAuthModal();
+  }
+</script>
+
+
+</body>
 </html>
