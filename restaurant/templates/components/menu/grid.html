@@ -1,0 +1,49 @@
+{% for item in items %}
+<article
+  class="menu-item bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
+  data-id="{{ item.id }}"
+  data-name="{{ item.name }}"
+  data-description="{{ item.description }}"
+  data-price="{{ item.price }}"
+  data-category="{{ item.category }}"
+  data-vegetarian="{{ item.is_vegetarian|yesno:'true,false' }}"
+>
+
+  <!-- Image wrapper (controls size) -->
+  <div class="aspect-[4/3] overflow-hidden rounded-t-xl">
+    {% if item.image_url %}
+      <img
+        src="{{ item.image_url }}"
+        alt="{{ item.name }}"
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+    {% else %}
+      <img
+        src="https://via.placeholder.com/400x300?text=No+Image"
+        alt="No image available"
+        class="w-full h-full object-cover"
+      />
+    {% endif %}
+  </div>
+
+  <div class="p-4">
+    <h3 class="font-semibold text-neutral-900 mb-1">
+      {{ item.name }}
+    </h3>
+
+    <p class="text-sm text-neutral-600 mb-3">
+      {{ item.description|truncatechars:80 }}
+    </p>
+
+    <span class="text-orange-600 font-semibold">
+      ${{ item.price }}
+    </span>
+  </div>
+</article>
+
+{% empty %}
+<p class="col-span-full text-center text-neutral-600">
+  No menu items available.
+</p>
+{% endfor %}

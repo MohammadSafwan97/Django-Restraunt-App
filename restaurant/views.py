@@ -23,9 +23,9 @@ def book(request):
 
 # Menu page
 def menu(request):
-    menu_data = Menu.objects.all()
-    main_data = {"menu": menu_data}
-    return render(request, 'menu.html', {"menu": main_data})
+    items = Menu.objects.filter(is_available=True)
+    return render(request, 'pages/menu.html', {'items': items})
+
 
 # Menu item page
 def display_menu_item(request, pk=None):

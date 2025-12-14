@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get(
     "django-insecure-dev-only"
 )
 
-DEBUG = False
+DEBUG = True
 
 # REQUIRED FOR RENDER
 ALLOWED_HOSTS = [

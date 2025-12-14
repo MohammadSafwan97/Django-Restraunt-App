@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Menu Interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-neutral-50">
+
+<main class="min-h-screen pb-20">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Header -->
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-xl sm:text-2xl font-semibold text-neutral-900">
+        Our Menu
+      </h1>
+      <p class="text-sm sm:text-base text-neutral-600">
+        Discover our delicious selection of dishes
+      </p>
+    </header>
+
+    <!-- Search + Filters -->
+    <section class="mb-6 sm:mb-8 space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <input
+          id="searchInput"
+          placeholder="Search for dishes..."
+          class="w-full flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500"
+        />
+        <label class="flex items-center justify-center gap-2 bg-white border px-4 py-3 rounded-lg text-sm">
+          <input id="vegFilter" type="checkbox">
+          Vegetarian
+        </label>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex gap-2 overflow-x-auto pb-2">
+        <button class="category-btn bg-orange-600 text-white px-4 py-2 rounded whitespace-nowrap" data-category="all">All</button>
+        <button class="category-btn border px-4 py-2 rounded whitespace-nowrap" data-category="main">Main</button>
+        <button class="category-btn border px-4 py-2 rounded whitespace-nowrap" data-category="dessert">Dessert</button>
+      </div>
+    </section>
+
+    <!-- Menu Grid -->
+    <section id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+
+      <!-- ITEM -->
+      <article
+        class="menu-item bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
+        data-name="Grilled Veg Pasta"
+        data-category="main"
+        data-vegetarian="true"
+        data-price="14.99"
+      >
+        <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092"
+             class="h-44 sm:h-48 w-full object-cover rounded-t-xl">
+        <div class="p-4">
+          <h3 class="font-semibold text-neutral-900">Grilled Veg Pasta</h3>
+          <p class="text-sm text-neutral-600">Fresh vegetables with pasta</p>
+          <span class="text-orange-600 font-semibold">$14.99</span>
+        </div>
+      </article>
+
+      <article
+        class="menu-item bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
+        data-name="Spicy Chicken"
+        data-category="main"
+        data-vegetarian="false"
+        data-price="16.50"
+      >
+        <img src="https://images.unsplash.com/photo-1604908554166-7a3f8baf3f2c"
+             class="h-44 sm:h-48 w-full object-cover rounded-t-xl">
+        <div class="p-4">
+          <h3 class="font-semibold text-neutral-900">Spicy Chicken</h3>
+          <p class="text-sm text-neutral-600">Mediterranean spices</p>
+          <span class="text-orange-600 font-semibold">$16.50</span>
+        </div>
+      </article>
+
+      <article
+        class="menu-item bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
+        data-name="Lemon Cheesecake"
+        data-category="dessert"
+        data-vegetarian="true"
+        data-price="7.99"
+      >
+        <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe"
+             class="h-44 sm:h-48 w-full object-cover rounded-t-xl">
+        <div class="p-4">
+          <h3 class="font-semibold text-neutral-900">Lemon Cheesecake</h3>
+          <p class="text-sm text-neutral-600">Creamy & fresh</p>
+          <span class="text-orange-600 font-semibold">$7.99</span>
+        </div>
+      </article>
+
+    </section>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl p-6 w-full max-w-sm sm:max-w-md">
+      <h2 id="modalName" class="text-lg sm:text-xl font-semibold mb-2"></h2>
+      <p id="modalPrice" class="text-orange-600 font-semibold mb-4"></p>
+
+      <div class="flex items-center justify-between mb-6">
+        <button id="minusQty" class="border px-4 py-2 rounded">-</button>
+        <span id="qty" class="text-lg">1</span>
+        <button id="plusQty" class="border px-4 py-2 rounded">+</button>
+      </div>
+
+      <button id="addBtn" class="w-full bg-orange-600 text-white py-3 rounded">
+        Add
+      </button>
+      <button id="closeModal" class="w-full mt-3 text-sm text-neutral-600">
+        Close
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- JS (unchanged) -->
+<script>
+  const items = document.querySelectorAll(".menu-item");
+  const searchInput = document.getElementById("searchInput");
+  const vegFilter = document.getElementById("vegFilter");
+  const categoryBtns = document.querySelectorAll(".category-btn");
+
+  const modal = document.getElementById("modal");
+  const modalName = document.getElementById("modalName");
+  const modalPrice = document.getElementById("modalPrice");
+  const qtyEl = document.getElementById("qty");
+
+  let activeCategory = "all";
+  let quantity = 1;
+  let price = 0;
+
+  function filterItems() {
+    const q = searchInput.value.toLowerCase();
+    const vegOnly = vegFilter.checked;
+
+    items.forEach(item => {
+      const matchSearch = item.dataset.name.toLowerCase().includes(q);
+      const matchCat = activeCategory === "all" || item.dataset.category === activeCategory;
+      const matchVeg = !vegOnly || item.dataset.vegetarian === "true";
+
+      item.style.display = matchSearch && matchCat && matchVeg ? "block" : "none";
+    });
+  }
+
+  searchInput.addEventListener("input", filterItems);
+  vegFilter.addEventListener("change", filterItems);
+
+  categoryBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeCategory = btn.dataset.category;
+      categoryBtns.forEach(b => b.classList.remove("bg-orange-600","text-white"));
+      btn.classList.add("bg-orange-600","text-white");
+      filterItems();
+    });
+  });
+
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      quantity = 1;
+      qtyEl.textContent = quantity;
+      price = parseFloat(item.dataset.price);
+      modalName.textContent = item.dataset.name;
+      modalPrice.textContent = "$" + price.toFixed(2);
+    });
+  });
+
+  document.getElementById("plusQty").onclick = () => {
+    quantity++;
+    qtyEl.textContent = quantity;
+    modalPrice.textContent = "$" + (price * quantity).toFixed(2);
+  };
+
+  document.getElementById("minusQty").onclick = () => {
+    if (quantity > 1) quantity--;
+    qtyEl.textContent = quantity;
+    modalPrice.textContent = "$" + (price * quantity).toFixed(2);
+  };
+
+  document.getElementById("closeModal").onclick = () => {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  };
+</script>
+
+</body>
+</html>

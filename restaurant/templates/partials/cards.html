@@ -1,0 +1,43 @@
+<section class="px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 lg:pb-20">
+  <div class="mx-auto max-w-6xl grid gap-6 sm:gap-8 md:grid-cols-3">
+
+    <article class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <img src="{% static 'img/grill.jpg' %}" class="aspect-[4/3] w-full object-cover" alt="">
+      <div class="p-6 space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900">Our new menu</h2>
+        <p class="text-sm text-slate-600">
+          Seasonal dishes inspired by Mediterranean cuisine.
+        </p>
+        <a href="{% url 'menu' %}" class="text-sm font-semibold text-amber-600 underline">
+          See our new menu
+        </a>
+      </div>
+    </article>
+
+    <article class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <img src="{% static 'img/dining.jpg' %}" class="aspect-[4/3] w-full object-cover" alt="">
+      <div class="p-6 space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900">Book a table</h2>
+        <p class="text-sm text-slate-600">
+          Reserve your table for a warm dining experience.
+        </p>
+        <a href="{% url 'book' %}" class="text-sm font-semibold text-amber-600 underline">
+          Book your table now
+        </a>
+      </div>
+    </article>
+
+    <article class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <img src="{% static 'img/opening.jpg' %}" class="aspect-[4/3] w-full object-cover" alt="">
+      <div class="p-6 space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900">Opening hours</h2>
+        <ul class="text-sm text-slate-700 space-y-1">
+          <li class="flex justify-between"><span>Mon – Fri</span><span>2pm – 10pm</span></li>
+          <li class="flex justify-between"><span>Sat</span><span>2pm – 11pm</span></li>
+          <li class="flex justify-between"><span>Sun</span><span>2pm – 9pm</span></li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+</section>

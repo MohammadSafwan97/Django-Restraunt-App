@@ -1,0 +1,22 @@
+<section class="mb-6 sm:mb-8 space-y-4">
+
+  <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+    <input
+      id="searchInput"
+      placeholder="Search for dishes..."
+      class="w-full flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500"
+    />
+
+    <label class="flex items-center justify-center gap-2 bg-white border px-4 py-3 rounded-lg text-sm">
+      <input id="vegFilter" type="checkbox">
+      Vegetarian
+    </label>
+  </div>
+
+  <div class="flex gap-2 overflow-x-auto pb-2">
+    <button class="category-btn bg-orange-600 text-white px-4 py-2 rounded" data-category="all">All</button>
+    <button class="category-btn border px-4 py-2 rounded" data-category="main">Main</button>
+    <button class="category-btn border px-4 py-2 rounded" data-category="dessert">Dessert</button>
+  </div>
+
+</section>

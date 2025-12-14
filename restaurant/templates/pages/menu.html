@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="min-h-screen bg-neutral-50 pb-20">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-2xl font-semibold text-neutral-900">
+        Our Menu
+      </h1>
+      <p class="text-neutral-600">
+        Discover our delicious selection of dishes
+      </p>
+    </header>
+
+    <!-- Filters -->
+    <section class="mb-8 space-y-4">
+      <div class="flex flex-col sm:flex-row gap-4">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search for dishes..."
+          class="w-full sm:flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500"
+        />
+
+        <label class="flex items-center gap-2 bg-white border px-4 py-3 rounded-lg text-sm">
+          <input id="vegFilter" type="checkbox">
+          Vegetarian
+        </label>
+      </div>
+    </section>
+
+    <!-- Menu Grid -->
+    <section
+      id="menuGrid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+
+      {% for item in items %}
+      <article
+        class="menu-item bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
+        data-name="{{ item.name }}"
+        data-description="{{ item.description }}"
+        data-price="{{ item.price }}"
+        data-vegetarian="{{ item.is_vegetarian|yesno:'true,false' }}"
+      >
+
+        <!-- Image -->
+        <div class="aspect-[16/9] overflow-hidden rounded-t-xl">
+          {% if item.image_url %}
+            <img
+              src="{{ item.image_url }}"
+              alt="{{ item.name }}"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          {% else %}
+            <img
+              src="https://via.placeholder.com/400x225?text=No+Image"
+              alt="No image"
+              class="w-full h-full object-cover"
+            />
+          {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="p-4">
+          <h3 class="font-semibold text-neutral-900 mb-1">
+            {{ item.name }}
+          </h3>
+
+          <p class="text-sm text-neutral-600 mb-3">
+            {{ item.description|truncatechars:80 }}
+          </p>
+
+          <span class="text-orange-600 font-semibold">
+            ${{ item.price }}
+          </span>
+        </div>
+
+      </article>
+      {% empty %}
+        <p class="col-span-full text-center text-neutral-600">
+          No menu items available.
+        </p>
+      {% endfor %}
+
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div
+    id="modal"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50"
+  >
+    <div class="bg-white rounded-xl p-6 w-full max-w-sm">
+      <h2 id="modalName" class="text-xl font-semibold mb-2"></h2>
+      <p id="modalDescription" class="text-sm text-neutral-600 mb-3"></p>
+      <p id="modalPrice" class="text-orange-600 font-semibold mb-6"></p>
+
+      <div class="flex items-center justify-between mb-6">
+        <button id="minusQty" class="border px-4 py-2 rounded">-</button>
+        <span id="qty" class="text-lg">1</span>
+        <button id="plusQty" class="border px-4 py-2 rounded">+</button>
+      </div>
+
+      <button class="w-full bg-orange-600 text-white py-3 rounded">
+        Add to cart
+      </button>
+
+      <button
+        id="closeModal"
+        class="w-full mt-3 text-sm text-neutral-600"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- JS -->
+<script>
+  const items = document.querySelectorAll(".menu-item");
+  const searchInput = document.getElementById("searchInput");
+  const vegFilter = document.getElementById("vegFilter");
+
+  const modal = document.getElementById("modal");
+  const modalName = document.getElementById("modalName");
+  const modalDescription = document.getElementById("modalDescription");
+  const modalPrice = document.getElementById("modalPrice");
+  const qtyEl = document.getElementById("qty");
+
+  let quantity = 1;
+  let price = 0;
+
+  function filterItems() {
+    const q = searchInput.value.toLowerCase();
+    const vegOnly = vegFilter.checked;
+
+    items.forEach(item => {
+      const matchSearch = item.dataset.name.toLowerCase().includes(q);
+      const matchVeg = !vegOnly || item.dataset.vegetarian === "true";
+      item.style.display = matchSearch && matchVeg ? "block" : "none";
+    });
+  }
+
+  searchInput.addEventListener("input", filterItems);
+  vegFilter.addEventListener("change", filterItems);
+
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      quantity = 1;
+      price = parseFloat(item.dataset.price);
+
+      modalName.textContent = item.dataset.name;
+      modalDescription.textContent = item.dataset.description;
+      modalPrice.textContent = "$" + price.toFixed(2);
+      qtyEl.textContent = quantity;
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    });
+  });
+
+  document.getElementById("plusQty").onclick = () => {
+    quantity++;
+    qtyEl.textContent = quantity;
+    modalPrice.textContent = "$" + (price * quantity).toFixed(2);
+  };
+
+  document.getElementById("minusQty").onclick = () => {
+    if (quantity > 1) quantity--;
+    qtyEl.textContent = quantity;
+    modalPrice.textContent = "$" + (price * quantity).toFixed(2);
+  };
+
+  document.getElementById("closeModal").onclick = () => {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  };
+</script>
+
+{% endblock %}
