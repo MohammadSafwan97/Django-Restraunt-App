@@ -94,7 +94,7 @@ a {
     ========================================================= */
 .hero-section {
   display: flex;
-  background: url("../images/hero-bg.jpg") center center / cover no-repeat;
+ 
   min-height: 90vh; /* full-screen look */
   position: relative;
   overflow: hidden;
