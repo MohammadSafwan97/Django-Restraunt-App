@@ -1,0 +1,365 @@
+/* =========================================================
+    Base Light Theme Styles for Restaurant Website
+    Bootstrap 5.3 + Django
+    ========================================================= */
+
+/* Force Bootstrap variables to light mode */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+:root {
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #222222;
+  --bs-link-color: #000000;
+  --bs-link-hover-color: #b49b57;
+}
+
+/* =========================================================
+    Global
+    ========================================================= */
+
+body {
+  font-family: "Poppins", sans-serif;
+
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg) !important;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.text-gold {
+  color: #b49b57 !important;
+}
+
+a {
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* =========================================================
+    Navbar
+    ========================================================= */
+.navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.navbar-brand span {
+  font-weight: 600;
+  color: #000;
+}
+
+.navbar-nav .nav-link {
+  color: #000000 !important;
+  font-weight: 400;
+  letter-spacing: 0.6px;
+  transition: color 0.3s;
+  font-size: small;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #b49b57 !important;
+}
+
+.btn-dark {
+  background-color: #000000;
+  border: none;
+  color: #fff;
+}
+
+.btn-dark:hover {
+  background-color: #333333;
+}
+
+.btn-outline-dark {
+  border: 1px solid #000;
+  color: #000;
+}
+
+.btn-outline-dark:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* =========================================================
+    Hero Section
+    ========================================================= */
+.hero-section {
+  display: flex;
+  background: url("../images/hero-bg.jpg") center center / cover no-repeat;
+  min-height: 90vh; /* full-screen look */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero Left Modern Styles */
+.hero-left h1 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700; /* bold for emphasis */
+  font-size: 3rem; /* adjust size as needed */
+  color: #222; /* adjust color */
+  letter-spacing: 0.5px;
+
+  line-height: 1.2;
+
+  max-height: 500px;
+}
+
+.hero-left h1 span {
+  color: #eddfb8; /* solid warm accent for coffee bg */
+  font-style: italic;
+}
+
+.hero-left p {
+  max-width: 480px;
+  color: #fff; /* white for contrast on coffee bg */
+  font-size: 1.1rem;
+}
+
+/* Button Hover Animation */
+.hero-left .btn-primary {
+  transition: all 0.3s;
+}
+.hero-left .btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Entrance Animations */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-slide-in {
+  opacity: 0;
+  animation: slideIn 0.8s forwards;
+}
+.animate-slide-in.delay-1 {
+  animation-delay: 0.3s;
+}
+.animate-slide-in.delay-2 {
+  animation-delay: 0.6s;
+}
+
+/* Signup Form Slide-in */
+.flex-right form {
+  opacity: 0;
+  animation: slideInRight 0.8s forwards 0.5s;
+}
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Floating Shapes (Optional Background Accents) */
+.floating-shape {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: float 6s ease-in-out infinite;
+}
+.floating-shape:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  background: #6c63ff;
+}
+.floating-shape:nth-child(2) {
+  top: 70%;
+  left: 80%;
+  background: #00d4ff;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Hero Form Specific Styles */
+.hero-form {
+  max-width: 400px;
+  color: #555;
+  background: transparent;
+}
+
+.hero-section img {
+  max-width: 40%;
+  height: 20%;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+.hero-right {
+  justify-self: flex-end;
+}
+.right-container {
+}
+
+/* =========================================================
+    Footer
+    ========================================================= */
+footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #eaeaea;
+}
+
+footer p {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* =========================================================
+    Responsive Tweaks
+    ========================================================= */
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .hero-section {
+    text-align: center;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .hero-section p {
+    margin: 0 auto 1.5rem;
+  }
+  .hero-img {
+    width: 100%;
+    height: 100px;
+    max-height: 480px; /* Adjust this number as needed */
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-dark,
+  .btn-outline-dark {
+    width: auto;
+    padding: 0.6rem 1.5rem;
+  }
+}
+.bt-login {
+  font-size: small;
+  background-color: red;
+}
+/* Fade-up animation for hero-left */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s forwards;
+}
+
+.animate-fade-up.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.animate-fade-up.delay-2 {
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button hover glow effect (optional enhancement) */
+.hero-left .btn-primary:hover {
+  box-shadow: 0 8px 20px rgba(140, 98, 57, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Floating coffee icons (optional if you want) */
+.coffee-icon {
+  position: absolute;
+  font-size: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+/* =========================================================
+    Menu Section
+   ========================================================= */
+.menu-section {
+  background: #fff4e6; /* subtle warm background */
+}
+
+.menu-section h2 {
+  color: #8c6239;
+}
+
+.menu-item {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.menu-item img {
+  object-fit: cover;
+  height: 220px;
+}
+
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(140, 98, 57, 0.2);
+}
+
+.menu-item .card-title {
+  color: #b49b57;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.menu-item .card-text {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.menu-item span.text-gold {
+  font-size: 1.1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .menu-item img {
+    height: 180px;
+  }
+}

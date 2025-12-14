@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Little Lemon</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Optional Tailwind custom config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Optional custom CSS file -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+
+  <body class="bg-white text-slate-900 antialiased">
+    <!-- Header / Navigation -->
+    <header class="w-full py-4 border-b border-slate-200 bg-white">
+      <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+        <h1 class="text-lg font-semibold tracking-tight">Little Lemon</h1>
+
+        <nav class="flex gap-6 text-sm">
+          <a href="/" class="hover:text-amber-600">Home</a>
+          <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a>
+          <a href="{% url 'book' %}" class="hover:text-amber-600">Book Table</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>{% block content %} {% endblock %}</main>
+
+    <!-- Footer -->
+    <footer class="mt-20 py-8 text-center text-sm text-slate-500 border-t">
+      © {% now "Y" %} Little Lemon Restaurant
+    </footer>
+  </body>
+</html>

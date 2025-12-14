@@ -1,0 +1,26 @@
+{% load static %}
+
+<footer
+  class="mt-16 bg-slate-900 text-slate-300 py-10 border-t border-slate-700"
+>
+  <div
+    class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center"
+  >
+    <!-- Logo -->
+    <article class="flex justify-center sm:justify-start">
+      <img
+        src="{% static 'img/logo_footer.png' %}"
+        alt="Little Lemon Logo"
+        class="h-14 w-auto object-contain opacity-90 hover:opacity-100 transition"
+      />
+    </article>
+
+    <!-- Copyright + Credit -->
+    <article class="text-center sm:text-right space-y-1">
+      <p class="text-sm tracking-tight">&copy; {% now "Y" %} Little Lemon</p>
+      <p class="text-xs text-slate-400">
+        Made by <span class="text-amber-400 font-medium">Muhammad Safwan</span>
+      </p>
+    </article>
+  </div>
+</footer>

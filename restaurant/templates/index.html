@@ -1,0 +1,141 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<main class="bg-slate-50">
+  <!-- Hero -->
+  <section class="px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
+    <article id="hero" class="mx-auto max-w-3xl text-center space-y-5">
+      <p
+        class="text-xs font-semibold uppercase tracking-[0.3em] text-amber-600"
+      >
+        Special Offer
+      </p>
+      <h1
+        class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900"
+      >
+        30% off this weekend
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+        Enjoy authentic Italian, Greek, and Turkish dishes at Little Lemon with
+        a limited-time weekend discount. Perfect for family dinners or a cozy
+        night out.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+        <a
+          href="{% url 'book' %}"
+          class="inline-flex items-center justify-center rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-colors"
+        >
+          Book now
+        </a>
+        <a
+          href="{% url 'menu' %}"
+          class="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-300 transition"
+        >
+          View menu
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <!-- Content cards -->
+  <section class="px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 lg:pb-20">
+    <div class="mx-auto max-w-6xl grid gap-6 sm:gap-8 md:grid-cols-3">
+      <!-- New Menu -->
+      <article
+        class="flex flex-col overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="aspect-[4/3] overflow-hidden">
+          <img
+            src="{% static 'img/grill.jpg' %}"
+            alt="Freshly grilled dishes from our new menu"
+            class="h-full w-full object-cover transition-transform duration-200 hover:scale-[1.03]"
+          />
+        </div>
+        <div class="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+          <h2
+            class="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
+          >
+            Our new menu
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600">
+            Our menu consists of 12–15 seasonal items inspired by Italian,
+            Greek, and Turkish cuisine, crafted with fresh, local ingredients.
+          </p>
+          <p class="mt-1">
+            <a
+              href="{% url 'menu' %}"
+              class="inline-flex items-center text-sm font-semibold text-amber-600 hover:text-amber-700 underline underline-offset-4 decoration-amber-300"
+            >
+              See our new menu
+            </a>
+          </p>
+        </div>
+      </article>
+
+      <!-- Book a table -->
+      <article
+        class="flex flex-col overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="aspect-[4/3] overflow-hidden">
+          <img
+            src="{% static 'img/dining.jpg' %}"
+            alt="Fresh salad and dishes ready to be served"
+            class="h-full w-full object-cover transition-transform duration-200 hover:scale-[1.03]"
+          />
+        </div>
+        <div class="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+          <h2
+            class="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
+          >
+            Book a table
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600">
+            Reserve your table for an Italian, Greek, and Turkish dining
+            experience in a warm, welcoming atmosphere.
+          </p>
+          <p class="mt-1">
+            <a
+              href="{% url 'book' %}"
+              class="inline-flex items-center text-sm font-semibold text-amber-600 hover:text-amber-700 underline underline-offset-4 decoration-amber-300"
+            >
+              Book your table now
+            </a>
+          </p>
+        </div>
+      </article>
+
+      <!-- Opening hours -->
+      <article
+        class="flex flex-col overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="aspect-[4/3] overflow-hidden">
+          <img
+            src="{% static 'img/opening.jpg' %}"
+            alt="Head chef at Little Lemon Restaurant"
+            class="h-full w-full object-cover transition-transform duration-200 hover:scale-[1.03]"
+          />
+        </div>
+        <div class="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+          <h2
+            class="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
+          >
+            Opening hours
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600">
+            Little Lemon is open 7 days a week, except on public holidays.
+          </p>
+          <ul class="mt-1 space-y-1.5 text-sm text-slate-700">
+            <li class="flex justify-between">
+              <span>Mon – Fri</span><span>2pm – 10pm</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Sat</span><span>2pm – 11pm</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Sun</span><span>2pm – 9pm</span>
+            </li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+{% endblock %}

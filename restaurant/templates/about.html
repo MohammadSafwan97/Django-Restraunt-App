@@ -1,0 +1,69 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<section class="px-4 sm:px-6 lg:px-8 py-12 bg-slate-50">
+  <article class="max-w-5xl mx-auto">
+    <!-- Page Heading -->
+    <h1 class="text-3xl font-semibold tracking-tight text-slate-900 mb-8">
+      About Us
+    </h1>
+
+    <!-- Responsive Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <!-- Text Column -->
+      <div class="space-y-4 text-slate-700 leading-relaxed">
+        <p>
+          Based in Chicago, Illinois, Little Lemon is a family owned
+          Mediterranean restaurant, focused on traditional recipes served with a
+          modern twist.
+        </p>
+
+        <p>
+          The chefs draw inspiration from Italian, Greek, and Turkish culture
+          and have a menu of 12-15 items that they rotate seasonally.
+        </p>
+
+        <p>
+          The restaurant has a rustic and relaxed atmosphere with moderate
+          prices, making it a popular place for a meal any time of the day.
+        </p>
+
+        <p>
+          Little Lemon is owned by two Italian brothers, Mario and Adrian, who
+          moved to the United States to pursue their shared dream of owning a
+          restaurant.
+        </p>
+
+        <p>
+          To craft the menu, Mario relies on family recipes and his experience
+          as a chef in Italy.
+        </p>
+
+        <p>
+          Adrian does all the marketing for the restaurant and led the effort to
+          expand the menu beyond classic Italian to incorporate additional
+          cuisines from the Mediterranean region.
+        </p>
+      </div>
+
+      <!-- Image Column -->
+      <div class="flex items-start justify-center lg:justify-end">
+        <figure class="w-full max-w-sm">
+          <div
+            class="overflow-hidden rounded-2xl shadow-lg border border-slate-200"
+          >
+            <img
+              src="{% static 'img/mario-and-adrian.jpg' %}"
+              alt="Mario and Adrian"
+              class="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+            />
+          </div>
+          <figcaption class="mt-3 text-sm text-slate-600 text-center">
+            Little Lemon owners Mario and Adrian.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </article>
+</section>
+
+{% endblock %}

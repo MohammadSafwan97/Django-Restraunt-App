@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<section class="px-4 sm:px-6 lg:px-8 py-10 bg-slate-50">
+  <article class="max-w-5xl mx-auto">
+    <!-- Breadcrumb -->
+    <h1 class="text-3xl font-semibold tracking-tight text-slate-900 mb-2">
+      Menu Item
+    </h1>
+
+    <nav class="text-sm text-slate-600 mb-8">
+      <a href="{% url 'home' %}" class="hover:text-amber-600">Home</a> /
+      <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a> /
+      <span class="text-slate-800 font-medium">{{ menu_item.name }}</span>
+    </nav>
+
+    <!-- Responsive Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <!-- Menu Item Details -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-semibold text-slate-900">
+          {{ menu_item.name }}
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+          {{ menu_item.menu_item_description }}
+        </p>
+
+        <p class="text-lg font-semibold text-amber-600">
+          Price: ${{ menu_item.price }}.00
+        </p>
+      </div>
+
+      <!-- Image -->
+      <div>
+        <div
+          class="overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white"
+        >
+          <img
+            src="{% static 'img/menu_items/' %}{{ menu_item.name }}.jpg"
+            alt="{{ menu_item.name }}"
+            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+{% endblock %}
