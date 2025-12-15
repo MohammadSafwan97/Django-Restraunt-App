@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Orders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-neutral-50 min-h-screen">
+
+<div class="max-w-7xl mx-auto px-6 py-8">
+  <h1 class="text-2xl font-semibold mb-6">Manage Orders</h1>
+
+  <!-- Search + Filter -->
+  <div class="bg-white p-6 rounded-xl shadow mb-6 flex gap-4">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Search by order ID..."
+      class="flex-1 px-4 py-3 border rounded-lg"
+    />
+
+    <select
+      id="statusFilter"
+      class="px-4 py-3 border rounded-lg"
+    >
+      <option value="all">All Orders</option>
+      <option value="pending">Pending</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="preparing">Preparing</option>
+      <option value="ready">Ready</option>
+      <option value="out-for-delivery">Out for Delivery</option>
+      <option value="delivered">Delivered</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-neutral-100">
+        <tr>
+          <th class="p-4">Order ID</th>
+          <th class="p-4">Date</th>
+          <th class="p-4">Items</th>
+          <th class="p-4">Total</th>
+          <th class="p-4">Status</th>
+          <th class="p-4">View</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="orderModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+  <div class="bg-white rounded-xl w-full max-w-xl p-6">
+    <div class="flex justify-between mb-4">
+      <h2 class="font-semibold">Order Details</h2>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- DATA FROM DJANGO ---------------- */
+const orders = JSON.parse('{{ orders_json|escapejs }}');
+
+/* ---------------- STATE ---------------- */
+let searchQuery = '';
+let statusFilter = 'all';
+let selectedOrder = null;
+
+/* ---------------- HELPERS ---------------- */
+function getStatusColor(status) {
+  const map = {
+    pending: 'bg-yellow-100 text-yellow-700',
+    confirmed: 'bg-blue-100 text-blue-700',
+    preparing: 'bg-orange-100 text-orange-700',
+    ready: 'bg-purple-100 text-purple-700',
+    'out-for-delivery': 'bg-indigo-100 text-indigo-700',
+    delivered: 'bg-green-100 text-green-700',
+    cancelled: 'bg-red-100 text-red-700',
+  };
+  return map[status] || map.pending;
+}
+
+/* ---------------- RENDER ---------------- */
+function renderOrders() {
+  const tbody = document.getElementById("ordersTable");
+  tbody.innerHTML = "";
+
+  orders
+    .filter(o =>
+      o.id.toLowerCase().includes(searchQuery) &&
+      (statusFilter === 'all' || o.status === statusFilter)
+    )
+    .reverse()
+    .forEach(order => {
+      const tr = document.createElement("tr");
+      tr.className = "border-t";
+
+      tr.innerHTML = `
+        <td class="p-4">${order.id}</td>
+        <td class="p-4">${new Date(order.createdAt).toLocaleString()}</td>
+        <td class="p-4">${order.items.length}</td>
+        <td class="p-4">$${order.total.toFixed(2)}</td>
+        <td class="p-4">
+          <select class="px-2 py-1 rounded ${getStatusColor(order.status)}"
+            onchange="updateStatus('${order.id}', this.value)">
+            ${['pending','confirmed','preparing','ready','out-for-delivery','delivered','cancelled']
+              .map(s => `<option value="${s}" ${s===order.status?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td class="p-4">
+          <button class="text-orange-600" onclick="openModal('${order.id}')">👁</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+}
+
+/* ---------------- EVENTS ---------------- */
+document.getElementById("searchInput").oninput = e => {
+  searchQuery = e.target.value.toLowerCase();
+  renderOrders();
+};
+
+document.getElementById("statusFilter").onchange = e => {
+  statusFilter = e.target.value;
+  renderOrders();
+};
+
+/* ---------------- MODAL ---------------- */
+function openModal(id) {
+  selectedOrder = orders.find(o => o.id === id);
+  const modal = document.getElementById("orderModal");
+  const content = document.getElementById("modalContent");
+
+  content.innerHTML = `
+    <p><strong>Order:</strong> ${selectedOrder.id}</p>
+    <p><strong>Total:</strong> $${selectedOrder.total.toFixed(2)}</p>
+    <hr class="my-3">
+    ${selectedOrder.items.map(i => `
+      <div class="flex justify-between">
+        <span>${i.menuItem.name} × ${i.quantity}</span>
+        <span>$${(i.menuItem.price*i.quantity).toFixed(2)}</span>
+      </div>
+    `).join('')}
+  `;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function closeModal() {
+  document.getElementById("orderModal").classList.add("hidden");
+}
+
+/* ---------------- UPDATE STATUS ---------------- */
+function updateStatus(id, status) {
+  const order = orders.find(o => o.id === id);
+  order.status = status;
+  renderOrders();
+}
+
+/* INIT */
+renderOrders();
+</script>
+
+</body>
+</html>

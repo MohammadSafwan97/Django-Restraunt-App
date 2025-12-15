@@ -2,109 +2,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>Safwan Restaurant</title>
-
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ["Inter", "sans-serif"],
-          },
-        },
-      },
-    };
-  </script>
-
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
-<body class="bg-white text-slate-900 antialiased">
+<body>
 
-  <!-- HEADER -->
   {% include "partials/header.html" %}
+  {% include "partials/cart_sidebar.html" %}
 
-  <!-- PAGE CONTENT -->
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+  {% block content %}{% endblock %}
 
-  <!-- AUTH MODAL -->
-  {% include "partials/auth_modal.html" %}
-
-  <!-- FOOTER -->
-  <footer class="mt-20 py-8 text-center text-sm text-slate-500 border-t">
-
-    © {% now "Y" %} Safwan Restaurant
-
-  
-
-  </footer>
-
-  <!-- AUTH JS -->
-  <script>
-    let authMode = "login"; // login | signup
-
-    function openAuthModal(mode = "login") {
-      authMode = mode;
-      const modal = document.getElementById("authModal");
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-      updateAuthUI();
-    }
-
-    function closeAuthModal() {
-      const modal = document.getElementById("authModal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    }
-
-    function switchAuthMode() {
-      authMode = authMode === "login" ? "signup" : "login";
-      updateAuthUI();
-    }
-
-    function updateAuthUI() {
-      const isLogin = authMode === "login";
-
-      document.getElementById("authTitle").textContent =
-        isLogin ? "Welcome Back" : "Create Account";
-
-      document.getElementById("nameField").classList.toggle("hidden", isLogin);
-
-      document.getElementById("switchText").textContent =
-        isLogin ? "Don't have an account?" : "Already have an account?";
-
-      document.querySelector("button[type='submit']").textContent =
-        isLogin ? "Sign In" : "Create Account";
-    }
-
-    function submitAuth(e) {
-      e.preventDefault();
-
-      const name = document.getElementById("authName").value.trim();
-      const email = document.getElementById("authEmail").value.trim();
-      const password = document.getElementById("authPassword").value.trim();
-
-      if (!email || !password || (authMode === "signup" && !name)) {
-        alert("Please fill all fields");
-        return;
-      }
-
-      alert(
-        authMode === "login"
-          ? `Logging in as ${email}`
-          : `Signing up ${name} (${email})`
-      );
-
-      closeAuthModal();
-    }
-  </script>
+  <script src="{% static 'js/cart.js' %}" defer></script>
+  <script src="{% static 'js/menu.js' %}" defer></script>
 
 </body>
 </html>

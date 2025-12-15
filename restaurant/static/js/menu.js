@@ -1,83 +1,73 @@
+console.log("menu.js loaded");
+
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM ready");
+
   const items = document.querySelectorAll(".menu-item");
-  const searchInput = document.getElementById("searchInput");
-  const vegFilter = document.getElementById("vegFilter");
-  const categoryBtns = document.querySelectorAll(".category-btn");
+  console.log("menu items found:", items.length);
 
   const modal = document.getElementById("modal");
   const modalName = document.getElementById("modalName");
+  const modalDescription = document.getElementById("modalDescription");
   const modalPrice = document.getElementById("modalPrice");
   const qtyEl = document.getElementById("qty");
 
   const plusQty = document.getElementById("plusQty");
   const minusQty = document.getElementById("minusQty");
   const closeModal = document.getElementById("closeModal");
+  const addToCartBtn = document.getElementById("addToCartBtn");
 
-  let activeCategory = "all";
   let quantity = 1;
   let price = 0;
-
-  function filterItems() {
-    if (!searchInput) return;
-
-    const q = searchInput.value.toLowerCase();
-    const vegOnly = vegFilter?.checked;
-
-    items.forEach(item => {
-      const matchSearch = item.dataset.name.toLowerCase().includes(q);
-      const matchCat = activeCategory === "all" || item.dataset.category === activeCategory;
-      const matchVeg = !vegOnly || item.dataset.vegetarian === "true";
-
-      item.style.display = matchSearch && matchCat && matchVeg ? "block" : "none";
-    });
-  }
-
-  searchInput?.addEventListener("input", filterItems);
-  vegFilter?.addEventListener("change", filterItems);
-
-  categoryBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      activeCategory = btn.dataset.category;
-
-      categoryBtns.forEach(b =>
-        b.classList.remove("bg-orange-600", "text-white")
-      );
-
-      btn.classList.add("bg-orange-600", "text-white");
-      filterItems();
-    });
-  });
+  let currentItem = null;
 
   items.forEach(item => {
     item.addEventListener("click", () => {
-      if (!modal) return;
+      quantity = 1;
+      price = parseFloat(item.dataset.price);
+
+      currentItem = {
+        id: item.dataset.id,
+        name: item.dataset.name,
+        price: price,
+      };
+
+      modalName.textContent = item.dataset.name;
+      modalDescription.textContent = item.dataset.description || "";
+      modalPrice.textContent = "$" + price.toFixed(2);
+      qtyEl.textContent = quantity;
 
       modal.classList.remove("hidden");
       modal.classList.add("flex");
-
-      quantity = 1;
-      qtyEl.textContent = quantity;
-
-      price = parseFloat(item.dataset.price);
-      modalName.textContent = item.dataset.name;
-      modalPrice.textContent = "$" + price.toFixed(2);
     });
   });
 
-  plusQty?.addEventListener("click", () => {
+  plusQty.onclick = () => {
     quantity++;
     qtyEl.textContent = quantity;
     modalPrice.textContent = "$" + (price * quantity).toFixed(2);
-  });
+  };
 
-  minusQty?.addEventListener("click", () => {
+  minusQty.onclick = () => {
     if (quantity > 1) quantity--;
     qtyEl.textContent = quantity;
     modalPrice.textContent = "$" + (price * quantity).toFixed(2);
-  });
+  };
 
-  closeModal?.addEventListener("click", () => {
+  addToCartBtn.onclick = () => {
+    if (!currentItem) return;
+
+    addToCart({
+      ...currentItem,
+      quantity: quantity,
+    });
+
     modal.classList.add("hidden");
     modal.classList.remove("flex");
-  });
+  };
+
+  closeModal.onclick = () => {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  };
 });
