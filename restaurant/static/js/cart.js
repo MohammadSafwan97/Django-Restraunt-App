@@ -1,17 +1,22 @@
-const DELIVERY_FEE = 4.99;
-const FREE_DELIVERY_THRESHOLD = 30;
+const DELIVERY_FEE = 250;
+const FREE_DELIVERY_THRESHOLD = 3000;
+const CART_KEY = "cart";
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+
+function saveCart() {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
 
 function openCart() {
-  document.getElementById("cart-sidebar").classList.remove("translate-x-full");
-  document.getElementById("cart-backdrop").classList.remove("hidden");
+  document.getElementById("cart-sidebar")?.classList.remove("translate-x-full");
+  document.getElementById("cart-backdrop")?.classList.remove("hidden");
   renderCart();
 }
 
 function closeCart() {
-  document.getElementById("cart-sidebar").classList.add("translate-x-full");
-  document.getElementById("cart-backdrop").classList.add("hidden");
+  document.getElementById("cart-sidebar")?.classList.add("translate-x-full");
+  document.getElementById("cart-backdrop")?.classList.add("hidden");
 }
 
 function addToCart(item) {
@@ -23,6 +28,7 @@ function addToCart(item) {
     cart.push({ ...item });
   }
 
+  saveCart();
   updateCartCount();
   openCart();
 }
@@ -34,12 +40,14 @@ function updateQuantity(id, qty) {
     item.id === id ? { ...item, quantity: qty } : item
   );
 
+  saveCart();
   updateCartCount();
   renderCart();
 }
 
 function removeFromCart(id) {
   cart = cart.filter(item => item.id !== id);
+  saveCart();
   updateCartCount();
   renderCart();
 }
@@ -72,7 +80,7 @@ function renderCart() {
         <div class="flex justify-between">
           <div>
             <h3 class="font-medium">${item.name}</h3>
-            <p class="text-orange-600">$${item.price.toFixed(2)}</p>
+            <p class="text-orange-600">Rs ${item.price}</p>
           </div>
           <button onclick="removeFromCart('${item.id}')">🗑</button>
         </div>
@@ -83,7 +91,7 @@ function renderCart() {
             <span>${item.quantity}</span>
             <button onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
           </div>
-          <span>$${(item.price * item.quantity).toFixed(2)}</span>
+          <span>Rs ${item.price * item.quantity}</span>
         </div>
       </div>
     `;
@@ -92,17 +100,19 @@ function renderCart() {
   const delivery = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
   const total = subtotal + delivery;
 
-  document.getElementById("cart-subtotal").innerText = `$${subtotal.toFixed(2)}`;
+  document.getElementById("cart-subtotal").innerText = `Rs ${subtotal}`;
   document.getElementById("cart-delivery").innerText =
-    delivery === 0 ? "FREE" : `$${DELIVERY_FEE}`;
-  document.getElementById("cart-total").innerText = `$${total.toFixed(2)}`;
+    delivery === 0 ? "FREE" : `Rs ${DELIVERY_FEE}`;
+  document.getElementById("cart-total").innerText = `Rs ${total}`;
 }
 
 function updateCartCount() {
-  const countEl = document.getElementById("cart-count");
-  if (!countEl) return;
-
   const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
-  countEl.textContent = totalItems;
-  countEl.classList.toggle("hidden", totalItems === 0);
+
+  document.querySelectorAll("[data-cart-count]").forEach(el => {
+    el.textContent = totalItems;
+    el.classList.toggle("hidden", totalItems === 0);
+  });
 }
+
+document.addEventListener("DOMContentLoaded", updateCartCount);

@@ -1,21 +1,18 @@
 {% load static %}
 
-<header class="w-full py-4 border-b border-slate-200 bg-white">
-  <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+<header class="sticky top-0 z-40 w-full bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 h-14 flex justify-between items-center">
 
-    <!-- Logo -->
-    <a href="/" class="text-lg font-semibold tracking-tight">
+    <a href="/" class="text-lg font-semibold tracking-tight whitespace-nowrap">
       Safwan Restaurant
     </a>
 
-    <!-- Desktop Navigation -->
     <nav class="hidden md:flex items-center gap-6 text-sm">
       <a href="/" class="hover:text-amber-600">Home</a>
       <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a>
       <a href="{% url 'book' %}" class="hover:text-amber-600">Book Table</a>
       <a href="{% url 'ordersPage' %}" class="hover:text-amber-600">Orders</a>
 
-      <!-- Cart Button -->
       <button
         onclick="openCart()"
         class="relative p-2 rounded-lg hover:bg-slate-100 transition"
@@ -26,10 +23,8 @@
           alt="Shopping Cart"
           class="w-6 h-6"
         />
-
-        <!-- Cart Count (SINGLE SOURCE OF TRUTH) -->
         <span
-          id="cart-count"
+          data-cart-count
           class="absolute -top-1 -right-1 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden"
         >
           0
@@ -51,47 +46,9 @@
       </button>
     </nav>
 
-    <!-- Mobile Hamburger -->
-    <button
-      class="md:hidden inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 transition"
-      onclick="toggleMobileMenu()"
-      aria-label="Open menu"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"
-        />
-      </svg>
-    </button>
-  </div>
-
-  <!-- Mobile Menu -->
-  <div
-    id="mobileMenu"
-    class="md:hidden hidden border-t border-slate-200 bg-white"
-  >
-    <nav class="px-4 py-4 space-y-3 text-sm">
-      <a href="/" class="block hover:text-amber-600">Home</a>
-      <a href="{% url 'menu' %}" class="block hover:text-amber-600">Menu</a>
-      <a href="{% url 'book' %}" class="block hover:text-amber-600">
-        Book Table
-      </a>
-      <a href="{% url 'ordersPage' %}" class="block hover:text-amber-600">
-        Orders
-      </a>
-
-      <!-- Cart Button (Mobile, SAME cart-count ID) -->
+    <div class="md:hidden flex items-center gap-2">
       <button
-        onclick="openCart()"
+        onclick="openCartFromMobile()"
         class="relative p-2 rounded-lg hover:bg-slate-100 transition"
         aria-label="Open cart"
       >
@@ -100,7 +57,34 @@
           alt="Shopping Cart"
           class="w-6 h-6"
         />
+        <span
+          data-cart-count
+          class="absolute -top-1 -right-1 bg-orange-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden"
+        >
+          0
+        </span>
       </button>
+
+      <button
+        onclick="toggleMobileMenu()"
+        class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-slate-100 transition"
+        aria-label="Open menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="md:hidden hidden border-t border-slate-200 bg-white">
+    <nav class="px-4 py-4 space-y-3 text-sm">
+      <a href="/" class="block hover:text-amber-600">Home</a>
+      <a href="{% url 'menu' %}" class="block hover:text-amber-600">Menu</a>
+      <a href="{% url 'book' %}" class="block hover:text-amber-600">Book Table</a>
+      <a href="{% url 'ordersPage' %}" class="block hover:text-amber-600">Orders</a>
 
       <div class="pt-3 border-t space-y-2">
         <button
@@ -122,7 +106,32 @@
 </header>
 
 <script>
+  let mobileMenuOpen = false;
+
   function toggleMobileMenu() {
-    document.getElementById("mobileMenu").classList.toggle("hidden");
+    mobileMenuOpen = !mobileMenuOpen;
+    document
+      .getElementById("mobileMenu")
+      .classList.toggle("hidden", !mobileMenuOpen);
+  }
+
+  function openCartFromMobile() {
+    mobileMenuOpen = false;
+    document.getElementById("mobileMenu").classList.add("hidden");
+    openCart();
+  }
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768) {
+      mobileMenuOpen = false;
+      document.getElementById("mobileMenu").classList.add("hidden");
+    }
+  });
+
+  function updateCartCount(count) {
+    document.querySelectorAll("[data-cart-count]").forEach(el => {
+      el.textContent = count;
+      el.classList.toggle("hidden", count === 0);
+    });
   }
 </script>

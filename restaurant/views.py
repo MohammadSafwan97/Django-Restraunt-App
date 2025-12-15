@@ -1,17 +1,18 @@
-from django.shortcuts import render
-from .models import Menu, Booking
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from .models import Menu, Booking, Order, OrderItem, Address
 from .forms import BookingForm
-import json   # ✅ REQUIRED
+import json
 
-# Home page
+
 def home(request):
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
-# About page
+
 def about(request):
-    return render(request, 'about.html')
+    return render(request, "about.html")
 
-# Booking page
+
 def book(request):
     if request.method == "POST":
         form = BookingForm(request.POST)
@@ -20,108 +21,106 @@ def book(request):
             form = BookingForm()
     else:
         form = BookingForm()
-    return render(request, 'book.html', {'form': form})
 
-# Menu page
+    return render(request, "book.html", {"form": form})
+
+
 def menu(request):
     items = Menu.objects.filter(is_available=True)
-    return render(request, 'pages/menu.html', {'items': items})
+    return render(request, "pages/menu.html", {"items": items})
 
-# Auth page
+
 def auth(request):
-    return render(request, 'pages/auth.html')
+    return render(request, "pages/auth.html")
 
-# Menu item page
+
 def display_menu_item(request, pk=None):
     menu_item = Menu.objects.get(pk=pk) if pk else None
-    return render(request, 'menu_item.html', {"menu_item": menu_item})
+    return render(request, "menu_item.html", {"menu_item": menu_item})
 
-# Orders page (Admin / Orders)
-def orders(request):
-    orders_data = [
-        {
-            "id": "ORD-1001",
-            "createdAt": "2025-01-15T10:30:00",
-            "status": "pending",
-            "total": 45.50,
-            "items": [
-                {
-                    "id": "1",
-                    "quantity": 2,
-                    "menuItem": {
-                        "name": "Burger",
-                        "price": 10.00
-                    }
-                },
-                {
-                    "id": "2",
-                    "quantity": 1,
-                    "menuItem": {
-                        "name": "Pizza",
-                        "price": 25.50
-                    }
-                }
-            ]
-        }
-    ]
-
-    context = {
-        "orders_json": json.dumps(orders_data)
-    }
-
-    return render(request, "order_page.html", context)
 
 def checkout(request):
-    # TEMP: replace with session / DB later
-    cart = request.session.get("cart", [])
-    user = request.session.get("user", None)
+    return render(request, "pages/checkout.html")
 
-    context = {
-        "cart_json": json.dumps(cart),
-        "user_json": json.dumps(user),
-    }
 
-    return render(request, "pages/checkout.html", context)
+def ordersPage(request):
+    orders = (
+        Order.objects
+        .prefetch_related("items__menu_item")
+        .order_by("-created_at")
+    )
+
+    orders_data = []
+    for order in orders:
+        orders_data.append({
+            "id": order.id,
+            "createdAt": order.created_at.isoformat(),
+            "status": order.status,
+            "total": float(order.total_amount),
+            "items": [
+                {
+                    "id": item.id,
+                    "quantity": item.quantity,
+                    "menuItem": {
+                        "name": item.menu_item.name,
+                        "price": float(item.menu_item.price),
+                    }
+                }
+                for item in order.items.all()
+            ]
+        })
+
+    return render(
+        request,
+        "pages/order_page.html",
+        {"orders_json": json.dumps(orders_data)}
+    )
+
+
+@csrf_exempt
+def place_order(request):
+    if request.method != "POST":
+        return redirect("menu")
+
+    data = json.loads(request.POST.get("order_data"))
+
+    address = Address.objects.create(
+        label="Home",
+        street=data["address"]["street"],
+        city=data["address"]["city"],
+        state=data["address"]["state"],
+        zip_code=data["address"]["zipCode"],
+    )
+
+    order = Order.objects.create(
+        payment_method=data["payment"],
+        address=address,
+        total_amount=data["total"],
+    )
+
+    for item in data["cart"]:
+        menu_item = Menu.objects.get(id=item["id"])
+        OrderItem.objects.create(
+            order=order,
+            menu_item=menu_item,
+            quantity=item["quantity"],
+        )
+
+    return redirect(
+        "order_confirmation",
+        order_id=order.id
+    )
 
 
 def order_confirmation(request, order_id):
-    # TEMP mock order (replace with DB later)
-    order = {
-        "id": order_id,
-        "createdAt": "2025-01-15T10:30:00",
-        "estimatedDelivery": "2025-01-15T11:15:00",
-        "paymentMethod": "card",
-        "total": 45.50,
-        "deliveryAddress": {
-            "street": "123 Main St",
-            "city": "New York",
-            "state": "NY",
-            "zipCode": "10001"
-        },
-        "items": [
-            {
-                "id": "1",
-                "quantity": 2,
-                "menuItem": {
-                    "name": "Burger",
-                    "price": 10.00,
-                    "image": "https://via.placeholder.com/80"
-                }
-            },
-            {
-                "id": "2",
-                "quantity": 1,
-                "menuItem": {
-                    "name": "Pizza",
-                    "price": 25.50,
-                    "image": "https://via.placeholder.com/80"
-                }
-            }
-        ]
-    }
+    order = (
+        Order.objects
+        .prefetch_related("items__menu_item")
+        .get(id=order_id)
+    )
 
-    context = {
-        "order_json": json.dumps(order)
-    }
-
-    return render(request, "pages/order_confirmation.html", context)
+    return render(
+        request,
+        "pages/order_confirmation.html",
+        {"order": order}
+    )

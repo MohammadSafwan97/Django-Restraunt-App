@@ -94,10 +94,13 @@ function renderOrders() {
   tbody.innerHTML = "";
 
   orders
-    .filter(o =>
-      o.id.toLowerCase().includes(searchQuery) &&
-      (statusFilter === 'all' || o.status === statusFilter)
-    )
+    .filter(o => {
+      const idStr = String(o.id);
+      return (
+        idStr.includes(searchQuery) &&
+        (statusFilter === "all" || o.status === statusFilter)
+      );
+    })
     .slice()
     .reverse()
     .forEach(order => {
@@ -105,27 +108,19 @@ function renderOrders() {
       tr.className = "border-t";
 
       tr.innerHTML = `
-        <td class="p-4">${order.id}</td>
+        <td class="p-4">#${order.id}</td>
         <td class="p-4">${new Date(order.createdAt).toLocaleString()}</td>
         <td class="p-4">${order.items.length}</td>
-        <td class="p-4">$${order.total.toFixed(2)}</td>
+        <td class="p-4">Rs ${order.total.toFixed(2)}</td>
         <td class="p-4">
-          <select
-            class="px-2 py-1 rounded ${getStatusColor(order.status)}"
-            onchange="updateStatus('${order.id}', this.value)"
-          >
-            ${['pending','confirmed','preparing','ready','out-for-delivery','delivered','cancelled']
-              .map(
-                s => `<option value="${s}" ${s === order.status ? 'selected' : ''}>
-                        ${s.replace('-', ' ')}
-                      </option>`
-              ).join('')}
-          </select>
+          <span class="px-2 py-1 rounded ${getStatusColor(order.status)}">
+            ${order.status.replace('-', ' ')}
+          </span>
         </td>
         <td class="p-4">
           <button
             class="text-orange-600 hover:underline"
-            onclick="openModal('${order.id}')"
+            onclick="openModal(${order.id})"
           >
             View
           </button>
@@ -137,7 +132,7 @@ function renderOrders() {
 
 /* ---------------- EVENTS ---------------- */
 document.getElementById("searchInput").addEventListener("input", e => {
-  searchQuery = e.target.value.toLowerCase();
+  searchQuery = e.target.value.trim();
   renderOrders();
 });
 
@@ -149,17 +144,19 @@ document.getElementById("statusFilter").addEventListener("change", e => {
 /* ---------------- MODAL ---------------- */
 function openModal(id) {
   selectedOrder = orders.find(o => o.id === id);
+  if (!selectedOrder) return;
+
   const modal = document.getElementById("orderModal");
   const content = document.getElementById("modalContent");
 
   content.innerHTML = `
-    <p class="mb-2"><strong>Order:</strong> ${selectedOrder.id}</p>
-    <p class="mb-4"><strong>Total:</strong> $${selectedOrder.total.toFixed(2)}</p>
+    <p class="mb-2"><strong>Order:</strong> #${selectedOrder.id}</p>
+    <p class="mb-4"><strong>Total:</strong> Rs ${selectedOrder.total.toFixed(2)}</p>
     <hr class="mb-4">
     ${selectedOrder.items.map(i => `
       <div class="flex justify-between mb-2">
         <span>${i.menuItem.name} × ${i.quantity}</span>
-        <span>$${(i.menuItem.price * i.quantity).toFixed(2)}</span>
+        <span>Rs ${(i.menuItem.price * i.quantity).toFixed(2)}</span>
       </div>
     `).join('')}
   `;
@@ -172,14 +169,6 @@ function closeModal() {
   const modal = document.getElementById("orderModal");
   modal.classList.add("hidden");
   modal.classList.remove("flex");
-}
-
-/* ---------------- UPDATE STATUS ---------------- */
-function updateStatus(id, status) {
-  const order = orders.find(o => o.id === id);
-  if (!order) return;
-  order.status = status;
-  renderOrders();
 }
 
 /* INIT */

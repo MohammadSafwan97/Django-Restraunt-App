@@ -3,7 +3,6 @@
 
 {% block content %}
 <div class="min-h-screen bg-neutral-50 py-8">
-
   <div class="max-w-6xl mx-auto px-4">
 
     <button
@@ -13,174 +12,120 @@
       ← Back to Menu
     </button>
 
-    <h1 class="text-neutral-900 mb-8">Checkout</h1>
+    <h1 class="text-2xl font-semibold text-neutral-900 mb-8">Checkout</h1>
 
-    <div id="checkoutRoot"></div>
+    <form
+      method="post"
+      action="{% url 'place_order' %}"
+      onsubmit="prepareOrderData()"
+    >
+      {% csrf_token %}
+
+      <input type="hidden" name="order_data" id="orderData">
+
+      <div class="grid lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 space-y-6">
+
+          <div class="bg-white rounded-xl p-6">
+            <h2 class="font-semibold mb-4">Delivery Address</h2>
+            <p>House 12, Block B, Karachi, Sindh 75500</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-6">
+            <h2 class="font-semibold mb-4">Payment Method</h2>
+            <label class="block mb-2">
+              <input type="radio" name="payment" value="cash" checked class="mr-2">
+              Cash on Delivery
+            </label>
+            <label class="block">
+              <input type="radio" name="payment" value="card" class="mr-2">
+              Card
+            </label>
+          </div>
+
+          <div class="bg-white rounded-xl p-6">
+            <h2 class="font-semibold mb-4">Delivery Instructions</h2>
+            <textarea
+              id="notes"
+              class="w-full border rounded-lg p-3"
+              rows="3"
+              placeholder="Leave at door, call on arrival..."
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div>
+          <div class="bg-white rounded-xl p-6 sticky top-24">
+            <h2 class="font-semibold mb-4">Order Summary</h2>
+
+            <div id="checkoutItems" class="space-y-2"></div>
+
+            <hr class="my-4">
+
+            <div class="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span id="subtotal">Rs 0.00</span>
+            </div>
+
+            <div class="flex justify-between font-semibold mt-4">
+              <span>Total</span>
+              <span id="total">Rs 0.00</span>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full mt-6 bg-orange-600 text-white py-4 rounded-lg hover:bg-orange-700"
+            >
+              Place Order
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
   </div>
 </div>
 
 <script>
-/* ---------------- DATA FROM DJANGO ---------------- */
-const cart = JSON.parse('{{ cart_json|escapejs }}') || [];
-const user = JSON.parse('{{ user_json|escapejs }}');
+const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+const itemsEl = document.getElementById("checkoutItems");
+const subtotalEl = document.getElementById("subtotal");
+const totalEl = document.getElementById("total");
 
-/* ---------------- GUARD ---------------- */
-if (!user) {
-  document.getElementById("checkoutRoot").innerHTML = `
-    <div class="max-w-md mx-auto bg-white rounded-xl p-8 text-center">
-      <h2 class="mb-4">Login Required</h2>
-      <p class="text-neutral-600 mb-6">Please login to continue checkout</p>
-      <a href="{% url 'auth' %}" class="block w-full bg-orange-600 text-white py-3 rounded">
-        Login
-      </a>
+let subtotal = 0;
+
+itemsEl.innerHTML = cart.map(item => {
+  subtotal += item.price * item.quantity;
+  return `
+    <div class="flex justify-between text-sm">
+      <span>${item.name} × ${item.quantity}</span>
+      <span>Rs ${(item.price * item.quantity).toFixed(2)}</span>
     </div>
   `;
-} else {
-  renderCheckout();
-}
+}).join("");
 
-/* ---------------- STATE ---------------- */
-let selectedPayment = "card";
-let selectedAddress = user.addresses?.find(a => a.isDefault) || null;
-let notes = "";
+subtotalEl.textContent = `Rs ${subtotal.toFixed(2)}`;
+totalEl.textContent = `Rs ${subtotal.toFixed(2)}`;
 
-/* ---------------- HELPERS ---------------- */
-function calculateTotals() {
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.menuItem.price * item.quantity, 0
-  );
-  const deliveryFee = subtotal >= 30 ? 0 : 4.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + deliveryFee + tax;
-  return { subtotal, deliveryFee, tax, total };
-}
+function prepareOrderData() {
+  const payment = document.querySelector('input[name="payment"]:checked').value;
 
-/* ---------------- RENDER ---------------- */
-function renderCheckout() {
-  const { subtotal, deliveryFee, tax, total } = calculateTotals();
-
-  document.getElementById("checkoutRoot").innerHTML = `
-    <div class="grid lg:grid-cols-3 gap-8">
-
-      <!-- LEFT -->
-      <div class="lg:col-span-2 space-y-6">
-
-        <!-- Address -->
-        <div class="bg-white rounded-xl p-6">
-          <h2 class="mb-4">Delivery Address</h2>
-          ${user.addresses.map(addr => `
-            <button
-              onclick="selectAddress('${addr.id}')"
-              class="w-full text-left p-4 mb-2 rounded-lg border-2 ${
-                selectedAddress?.id === addr.id
-                  ? 'border-orange-600 bg-orange-50'
-                  : 'border-neutral-200'
-              }"
-            >
-              <p class="font-medium">${addr.label}</p>
-              <p class="text-sm text-neutral-600">
-                ${addr.street}, ${addr.city}, ${addr.state} ${addr.zipCode}
-              </p>
-            </button>
-          `).join("")}
-        </div>
-
-        <!-- Payment -->
-        <div class="bg-white rounded-xl p-6">
-          <h2 class="mb-4">Payment Method</h2>
-          ${["card","digital","cash"].map(p => `
-            <button
-              onclick="selectPayment('${p}')"
-              class="w-full text-left p-4 mb-2 rounded-lg border-2 ${
-                selectedPayment === p
-                  ? 'border-orange-600 bg-orange-50'
-                  : 'border-neutral-200'
-              }"
-            >
-              ${p.replace("-", " ")}
-            </button>
-          `).join("")}
-        </div>
-
-        <!-- Notes -->
-        <div class="bg-white rounded-xl p-6">
-          <h2 class="mb-4">Delivery Instructions</h2>
-          <textarea
-            onchange="notes=this.value"
-            class="w-full border rounded-lg p-3"
-            rows="3"
-            placeholder="Leave at door, call on arrival..."
-          ></textarea>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div>
-        <div class="bg-white rounded-xl p-6 sticky top-24">
-          <h2 class="mb-4">Order Summary</h2>
-
-          ${cart.map(item => `
-            <div class="flex justify-between mb-2">
-              <span>${item.menuItem.name} × ${item.quantity}</span>
-              <span>$${(item.menuItem.price * item.quantity).toFixed(2)}</span>
-            </div>
-          `).join("")}
-
-          <hr class="my-4">
-
-          <div class="flex justify-between text-sm">
-            <span>Subtotal</span><span>$${subtotal.toFixed(2)}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span>Delivery</span>
-            <span>${deliveryFee === 0 ? "FREE" : "$" + deliveryFee.toFixed(2)}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span>Tax</span><span>$${tax.toFixed(2)}</span>
-          </div>
-
-          <div class="flex justify-between mt-4 font-semibold">
-            <span>Total</span><span>$${total.toFixed(2)}</span>
-          </div>
-
-          <button
-            onclick="placeOrder()"
-            class="w-full mt-6 bg-orange-600 text-white py-4 rounded-lg"
-          >
-            Place Order
-          </button>
-        </div>
-      </div>
-
-    </div>
-  `;
-}
-
-/* ---------------- ACTIONS ---------------- */
-function selectAddress(id) {
-  selectedAddress = user.addresses.find(a => a.id === id);
-  renderCheckout();
-}
-
-function selectPayment(p) {
-  selectedPayment = p;
-  renderCheckout();
-}
-
-function placeOrder() {
-  if (!selectedAddress) {
-    alert("Please select an address");
-    return;
-  }
-
-  console.log("ORDER:", {
-    cart,
-    address: selectedAddress,
-    payment: selectedPayment,
-    notes
+  document.getElementById("orderData").value = JSON.stringify({
+    cart: cart,
+    payment: payment,
+    total: subtotal,
+    address: {
+      street: "House 12, Block B",
+      city: "Karachi",
+      state: "Sindh",
+      zipCode: "75500"
+    }
   });
 
-  alert("Order placed (next step: backend)");
+  localStorage.removeItem("cart");
 }
 </script>
 {% endblock %}

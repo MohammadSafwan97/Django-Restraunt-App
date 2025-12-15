@@ -1,10 +1,7 @@
 console.log("menu.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM ready");
-
   const items = document.querySelectorAll(".menu-item");
-  console.log("menu items found:", items.length);
 
   const modal = document.getElementById("modal");
   const modalName = document.getElementById("modalName");
