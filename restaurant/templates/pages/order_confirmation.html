@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-neutral-50 py-12">
+  <div class="max-w-3xl mx-auto px-4">
+
+    <!-- Success Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+        <span class="text-green-600 text-4xl">✔</span>
+      </div>
+      <h1 class="text-neutral-900 mb-2">Order Placed Successfully!</h1>
+      <p class="text-neutral-600">
+        Thank you for your order. We're preparing your delicious meal.
+      </p>
+    </div>
+
+    <!-- Order Info -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div class="flex justify-between mb-6 pb-6 border-b">
+        <div>
+          <p class="text-neutral-600 text-sm">Order Number</p>
+          <p id="orderId" class="text-neutral-900"></p>
+        </div>
+        <div class="text-right">
+          <p class="text-neutral-600 text-sm">Estimated Delivery</p>
+          <p id="estimatedDelivery" class="text-neutral-900"></p>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="space-y-4 mb-6">
+        <div class="flex gap-4">
+          <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">✔</div>
+          <div>
+            <p class="text-neutral-900">Order Confirmed</p>
+            <p id="createdAt" class="text-neutral-600 text-sm"></p>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">🍳</div>
+          <div>
+            <p class="text-neutral-900">Preparing Your Order</p>
+            <p class="text-neutral-600 text-sm">Our kitchen is working on it</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <div class="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center">🚚</div>
+          <div>
+            <p class="text-neutral-600">Out for Delivery</p>
+            <p class="text-neutral-500 text-sm">Estimated in 30–45 minutes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery & Payment -->
+      <div class="grid md:grid-cols-2 gap-4 pt-6 border-t">
+        <div>
+          <p class="text-neutral-900 mb-1">Delivery Address</p>
+          <p id="deliveryAddress" class="text-neutral-600 text-sm"></p>
+        </div>
+        <div>
+          <p class="text-neutral-900 mb-1">Payment Method</p>
+          <p id="paymentMethod" class="text-neutral-600 text-sm capitalize"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="text-neutral-900 mb-4">Order Items</h2>
+      <div id="orderItems" class="space-y-4"></div>
+
+      <div class="mt-6 pt-6 border-t flex justify-between">
+        <span>Total Amount</span>
+        <span id="orderTotal"></span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        id="trackBtn"
+        class="flex-1 text-center px-6 py-4 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+      >
+        Track Order
+      </a>
+      <a
+        href="{% url 'menu' %}"
+        class="flex-1 text-center px-6 py-4 border rounded-lg hover:bg-neutral-50"
+      >
+        Continue Shopping
+      </a>
+    </div>
+
+    <div class="mt-8 text-center text-sm text-neutral-600">
+      Need help? <span class="text-orange-600 cursor-pointer">Contact Support</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const order = JSON.parse('{{ order_json|escapejs }}');
+
+document.getElementById("orderId").textContent = order.id;
+document.getElementById("createdAt").textContent =
+  new Date(order.createdAt).toLocaleString();
+
+document.getElementById("estimatedDelivery").textContent =
+  new Date(order.estimatedDelivery).toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+
+document.getElementById("paymentMethod").textContent =
+  order.paymentMethod.replace("-", " ");
+
+document.getElementById("deliveryAddress").innerHTML = `
+  ${order.deliveryAddress.street}<br>
+  ${order.deliveryAddress.city}, ${order.deliveryAddress.state}
+  ${order.deliveryAddress.zipCode}
+`;
+
+document.getElementById("orderTotal").textContent =
+  "$" + order.total.toFixed(2);
+
+document.getElementById("trackBtn").href =
+  "/orders/track/" + order.id + "/";
+
+document.getElementById("orderItems").innerHTML =
+  order.items.map(item => `
+    <div class="flex gap-4">
+      <img src="${item.menuItem.image}" class="w-20 h-20 rounded object-cover">
+      <div class="flex-1">
+        <p>${item.menuItem.name}</p>
+        <p class="text-sm text-neutral-600">Qty: ${item.quantity}</p>
+      </div>
+      <p>$${(item.menuItem.price * item.quantity).toFixed(2)}</p>
+    </div>
+  `).join("");
+</script>
+{% endblock %}

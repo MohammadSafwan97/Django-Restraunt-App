@@ -82,3 +82,46 @@ def checkout(request):
     }
 
     return render(request, "pages/checkout.html", context)
+
+
+def order_confirmation(request, order_id):
+    # TEMP mock order (replace with DB later)
+    order = {
+        "id": order_id,
+        "createdAt": "2025-01-15T10:30:00",
+        "estimatedDelivery": "2025-01-15T11:15:00",
+        "paymentMethod": "card",
+        "total": 45.50,
+        "deliveryAddress": {
+            "street": "123 Main St",
+            "city": "New York",
+            "state": "NY",
+            "zipCode": "10001"
+        },
+        "items": [
+            {
+                "id": "1",
+                "quantity": 2,
+                "menuItem": {
+                    "name": "Burger",
+                    "price": 10.00,
+                    "image": "https://via.placeholder.com/80"
+                }
+            },
+            {
+                "id": "2",
+                "quantity": 1,
+                "menuItem": {
+                    "name": "Pizza",
+                    "price": 25.50,
+                    "image": "https://via.placeholder.com/80"
+                }
+            }
+        ]
+    }
+
+    context = {
+        "order_json": json.dumps(order)
+    }
+
+    return render(request, "pages/order_confirmation.html", context)
