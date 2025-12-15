@@ -69,4 +69,16 @@ def orders(request):
         "orders_json": json.dumps(orders_data)
     }
 
-    return render(request, "pages/order_page.html", context)
+    return render(request, "order_page.html", context)
+
+def checkout(request):
+    # TEMP: replace with session / DB later
+    cart = request.session.get("cart", [])
+    user = request.session.get("user", None)
+
+    context = {
+        "cart_json": json.dumps(cart),
+        "user_json": json.dumps(user),
+    }
+
+    return render(request, "pages/checkout.html", context)
