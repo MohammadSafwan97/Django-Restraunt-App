@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Little Lemon</title>
+  <title>Safwan Restaurant</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -27,38 +27,7 @@
 <body class="bg-white text-slate-900 antialiased">
 
   <!-- HEADER -->
-  <header class="w-full py-4 border-b border-slate-200 bg-white">
-    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
-
-      <!-- Logo -->
-      <a href="/" class="text-lg font-semibold tracking-tight">
-        Little Lemon
-      </a>
-
-      <!-- Navigation -->
-      <nav class="flex items-center gap-6 text-sm">
-        <a href="/" class="hover:text-amber-600">Home</a>
-        <a href="{% url 'menu' %}" class="hover:text-amber-600">Menu</a>
-        <a href="{% url 'book' %}" class="hover:text-amber-600">Book Table</a>
-
-        <!-- AUTH BUTTONS -->
-        <button
-          onclick="openAuthModal('login')"
-          class="px-4 py-2 border rounded-lg hover:bg-slate-100 transition"
-        >
-          Login
-        </button>
-
-        <button
-          onclick="openAuthModal('signup')"
-          class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition"
-        >
-          Sign Up
-        </button>
-      </nav>
-
-    </div>
-  </header>
+  {% include "partials/header.html" %}
 
   <!-- PAGE CONTENT -->
   <main>
@@ -70,69 +39,68 @@
 
   <!-- FOOTER -->
   <footer class="mt-20 py-8 text-center text-sm text-slate-500 border-t">
-    © {% now "Y" %} Little Lemon Restaurant
+    © {% now "Y" %} Safwan Restaurant
   </footer>
 
   <!-- AUTH JS -->
   <script>
-  let authMode = "login"; // login | signup
+    let authMode = "login"; // login | signup
 
-  function openAuthModal(mode = "login") {
-    authMode = mode;
-    const modal = document.getElementById("authModal");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-    updateAuthUI();
-  }
-
-  function closeAuthModal() {
-    const modal = document.getElementById("authModal");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-  }
-
-  function switchAuthMode() {
-    authMode = authMode === "login" ? "signup" : "login";
-    updateAuthUI();
-  }
-
-  function updateAuthUI() {
-    const isLogin = authMode === "login";
-
-    document.getElementById("authTitle").textContent =
-      isLogin ? "Welcome Back" : "Create Account";
-
-    document.getElementById("nameField").classList.toggle("hidden", isLogin);
-
-    document.getElementById("switchText").textContent =
-      isLogin ? "Don't have an account?" : "Already have an account?";
-
-    document.querySelector("button[type='submit']").textContent =
-      isLogin ? "Sign In" : "Create Account";
-  }
-
-  function submitAuth(e) {
-    e.preventDefault();
-
-    const name = document.getElementById("authName").value.trim();
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value.trim();
-
-    if (!email || !password || (authMode === "signup" && !name)) {
-      alert("Please fill all fields");
-      return;
+    function openAuthModal(mode = "login") {
+      authMode = mode;
+      const modal = document.getElementById("authModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      updateAuthUI();
     }
 
-    alert(
-      authMode === "login"
-        ? `Logging in as ${email}`
-        : `Signing up ${name} (${email})`
-    );
+    function closeAuthModal() {
+      const modal = document.getElementById("authModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
 
-    closeAuthModal();
-  }
-</script>
+    function switchAuthMode() {
+      authMode = authMode === "login" ? "signup" : "login";
+      updateAuthUI();
+    }
 
+    function updateAuthUI() {
+      const isLogin = authMode === "login";
+
+      document.getElementById("authTitle").textContent =
+        isLogin ? "Welcome Back" : "Create Account";
+
+      document.getElementById("nameField").classList.toggle("hidden", isLogin);
+
+      document.getElementById("switchText").textContent =
+        isLogin ? "Don't have an account?" : "Already have an account?";
+
+      document.querySelector("button[type='submit']").textContent =
+        isLogin ? "Sign In" : "Create Account";
+    }
+
+    function submitAuth(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("authName").value.trim();
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
+
+      if (!email || !password || (authMode === "signup" && !name)) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      alert(
+        authMode === "login"
+          ? `Logging in as ${email}`
+          : `Signing up ${name} (${email})`
+      );
+
+      closeAuthModal();
+    }
+  </script>
 
 </body>
 </html>
