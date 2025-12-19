@@ -22,7 +22,7 @@ def book(request):
         form = BookingForm(request.POST)
         if form.is_valid():
             form.save()
-            form = BookingForm()
+            return redirect("book")
     else:
         form = BookingForm()
 
@@ -37,39 +37,54 @@ def menu(request):
 # ================= AUTH =================
 
 def signin_view(request):
-    if request.method == "POST":
-        user = authenticate(
-            request,
-            username=request.POST.get("username"),
-            password=request.POST.get("password")
-        )
-        if user:
-            login(request, user)
-            return redirect("menu")
+    if request.method != "POST":
+        return redirect("home")
 
+    username = request.POST.get("username", "").strip()
+    password = request.POST.get("password", "").strip()
+
+    if not username or not password:
+        messages.error(request, "Username and password are required")
+        return redirect("home")
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
         messages.error(request, "Invalid username or password")
         return redirect("home")
 
-    return redirect("home")
+    login(request, user)
+    return redirect("menu")
 
 
 def signup_view(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+    if request.method != "POST":
+        return redirect("home")
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-            return redirect("home")
+    username = request.POST.get("username", "").strip()
+    email = request.POST.get("email", "").strip()
+    password = request.POST.get("password", "").strip()
 
-        user = User.objects.create_user(
-            username=username,
-            password=password
-        )
-        login(request, user)
-        return redirect("menu")
+    if not username or not email or not password:
+        messages.error(request, "Username, email and password are required")
+        return redirect("home")
 
-    return redirect("home")
+    if User.objects.filter(username=username).exists():
+        messages.error(request, "Username already exists")
+        return redirect("home")
+
+    if User.objects.filter(email=email).exists():
+        messages.error(request, "Email already exists")
+        return redirect("home")
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password
+    )
+
+    login(request, user)
+    return redirect("menu")
 
 
 def logout_view(request):
@@ -100,9 +115,8 @@ def ordersPage(request):
         .order_by("-created_at")
     )
 
-    orders_data = []
-    for order in orders:
-        orders_data.append({
+    orders_data = [
+        {
             "id": order.id,
             "createdAt": order.created_at.isoformat(),
             "status": order.status,
@@ -114,11 +128,13 @@ def ordersPage(request):
                     "menuItem": {
                         "name": item.menu_item.name,
                         "price": float(item.menu_item.price),
-                    }
+                    },
                 }
                 for item in order.items.all()
-            ]
-        })
+            ],
+        }
+        for order in orders
+    ]
 
     return render(
         request,
@@ -162,11 +178,7 @@ def place_order(request):
 
 @login_required(login_url="signin")
 def order_confirmation(request, order_id):
-    order = Order.objects.get(
-        id=order_id,
-        user=request.user
-    )
-
+    order = Order.objects.get(id=order_id, user=request.user)
     return render(
         request,
         "pages/order_confirmation.html",
