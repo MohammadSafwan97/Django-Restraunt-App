@@ -7,16 +7,20 @@
     <button
       onclick="closeAuthModal()"
       class="absolute top-4 right-4"
-    >✕</button>
+    >
+      ✕
+    </button>
 
     <h2 id="authTitle" class="text-xl font-semibold mb-6">
       Welcome Back
     </h2>
 
     {% if messages %}
-      <div class="mb-4">
+      <div class="mb-4 space-y-2">
         {% for message in messages %}
-          <p class="text-red-600 text-sm">{{ message }}</p>
+          <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            {{ message }}
+          </p>
         {% endfor %}
       </div>
     {% endif %}
@@ -30,23 +34,36 @@
       {% csrf_token %}
 
       <div>
-        <label>Username</label>
-        <input name="username" required class="w-full border px-4 py-2 rounded">
+        <label class="block mb-1 text-sm">Username</label>
+        <input
+          name="username"
+          required
+          class="w-full border px-4 py-2 rounded-lg"
+        />
       </div>
 
       <div id="emailField" class="hidden">
-        <label>Email</label>
-        <input name="email" type="email" class="w-full border px-4 py-2 rounded">
+        <label class="block mb-1 text-sm">Email</label>
+        <input
+          name="email"
+          type="email"
+          class="w-full border px-4 py-2 rounded-lg"
+        />
       </div>
 
       <div>
-        <label>Password</label>
-        <input name="password" type="password" required class="w-full border px-4 py-2 rounded">
+        <label class="block mb-1 text-sm">Password</label>
+        <input
+          name="password"
+          type="password"
+          required
+          class="w-full border px-4 py-2 rounded-lg"
+        />
       </div>
 
       <button
         type="submit"
-        class="w-full py-3 bg-orange-600 text-white rounded"
+        class="w-full py-3 bg-orange-600 text-white rounded-lg"
       >
         Sign In
       </button>
@@ -54,10 +71,15 @@
 
     <p class="text-center mt-4 text-sm">
       <span id="switchText">Don't have an account?</span>
-      <button onclick="switchAuthMode()" class="text-orange-600">
+      <button
+        type="button"
+        onclick="switchAuthMode()"
+        class="text-orange-600"
+      >
         Sign Up
       </button>
     </p>
+
   </div>
 </div>
 
@@ -66,14 +88,16 @@
 
   function openAuthModal(mode) {
     authMode = mode;
-    authModal.classList.remove("hidden");
-    authModal.classList.add("flex");
+    const modal = document.getElementById("authModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
     updateAuthUI();
   }
 
   function closeAuthModal() {
-    authModal.classList.add("hidden");
-    authModal.classList.remove("flex");
+    const modal = document.getElementById("authModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
   }
 
   function switchAuthMode() {
@@ -82,21 +106,27 @@
   }
 
   function updateAuthUI() {
-    const signup = authMode === "signup";
+    const isSignup = authMode === "signup";
 
     document.getElementById("authTitle").innerText =
-      signup ? "Create Account" : "Welcome Back";
+      isSignup ? "Create Account" : "Welcome Back";
 
     document.getElementById("emailField")
-      .classList.toggle("hidden", !signup);
+      .classList.toggle("hidden", !isSignup);
 
-    document.querySelector("button[type='submit']").innerText =
-      signup ? "Create Account" : "Sign In";
+    document.querySelector("#authForm button[type='submit']").innerText =
+      isSignup ? "Create Account" : "Sign In";
 
     document.getElementById("switchText").innerText =
-      signup ? "Already have an account?" : "Don't have an account?";
+      isSignup ? "Already have an account?" : "Don't have an account?";
 
     document.getElementById("authForm").action =
-      signup ? "/signup/" : "/signin/";
+      isSignup ? "/signup/" : "/signin/";
   }
+
+  {% if messages %}
+    window.addEventListener("DOMContentLoaded", () => {
+      openAuthModal("login");
+    });
+  {% endif %}
 </script>
