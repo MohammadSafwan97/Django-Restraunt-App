@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Booking(models.Model):
@@ -41,6 +42,11 @@ class Order(models.Model):
         ("card", "Card"),
     ]
 
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="orders"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Auth Modal Demo</title>
+  <title>Little Lemon | Auth</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -16,19 +16,28 @@
     <h1 class="font-semibold text-lg">Little Lemon</h1>
 
     <div class="flex gap-3">
-      <button
-        onclick="openAuthModal('login')"
-        class="px-4 py-2 text-sm border rounded-lg hover:bg-slate-100"
-      >
-        Sign In
-      </button>
+      {% if user.is_authenticated %}
+        <a
+          href="{% url 'logout' %}"
+          class="px-4 py-2 text-sm border rounded-lg hover:bg-slate-100"
+        >
+          Logout
+        </a>
+      {% else %}
+        <button
+          onclick="openAuthModal('login')"
+          class="px-4 py-2 text-sm border rounded-lg hover:bg-slate-100"
+        >
+          Sign In
+        </button>
 
-      <button
-        onclick="openAuthModal('signup')"
-        class="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-      >
-        Sign Up
-      </button>
+        <button
+          onclick="openAuthModal('signup')"
+          class="px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+        >
+          Sign Up
+        </button>
+      {% endif %}
     </div>
 
   </div>
@@ -57,35 +66,43 @@
       Welcome Back
     </h2>
 
-    <!-- Error -->
-    <div
-      id="authError"
-      class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mb-4"
+    <!-- Django Messages -->
+    {% if messages %}
+      <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+        {% for message in messages %}
+          <p class="text-red-800 text-sm">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- ================= FORM ================= -->
+    <form
+      method="POST"
+      action="{% url 'signin' %}"
+      id="authForm"
+      class="space-y-4"
     >
-      <p class="text-red-800 text-sm" id="authErrorText"></p>
-    </div>
+      {% csrf_token %}
 
-    <!-- Form -->
-    <form onsubmit="submitAuth(event)" class="space-y-4">
-
-      <!-- Name (signup only) -->
-      <div id="nameField" class="hidden">
-        <label class="block text-neutral-700 mb-2">Full Name</label>
+      <!-- Username (signup only) -->
+      <div id="usernameField" class="hidden">
+        <label class="block text-neutral-700 mb-2">Username</label>
         <input
-          id="authName"
+          name="username"
+          type="text"
           class="w-full px-4 py-3 border rounded-lg"
-          placeholder="John Doe"
+          placeholder="john_doe"
         />
       </div>
 
-      <!-- Email -->
-      <div>
-        <label class="block text-neutral-700 mb-2">Email</label>
+      <!-- Username (login) -->
+      <div id="loginUsernameField">
+        <label class="block text-neutral-700 mb-2">Username</label>
         <input
-          id="authEmail"
-          type="email"
+          name="username"
+          type="text"
           class="w-full px-4 py-3 border rounded-lg"
-          placeholder="you@example.com"
+          placeholder="john_doe"
         />
       </div>
 
@@ -93,7 +110,7 @@
       <div>
         <label class="block text-neutral-700 mb-2">Password</label>
         <input
-          id="authPassword"
+          name="password"
           type="password"
           class="w-full px-4 py-3 border rounded-lg"
           placeholder="••••••••"
@@ -105,7 +122,7 @@
         id="loginHint"
         class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800"
       >
-        💡 Demo: admin@savory.com
+        💡 Demo credentials work if user exists
       </div>
 
       <!-- Submit -->
@@ -121,6 +138,7 @@
     <p class="text-center text-neutral-600 mt-6">
       <span id="switchText">Don't have an account?</span>
       <button
+        type="button"
         onclick="switchAuthMode()"
         class="text-orange-600 font-medium hover:underline"
       >
@@ -144,7 +162,9 @@
   }
 
   function closeAuthModal() {
-    document.getElementById("authModal").classList.add("hidden");
+    const modal = document.getElementById("authModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
   }
 
   function switchAuthMode() {
@@ -158,7 +178,8 @@
     document.getElementById("authTitle").innerText =
       isLogin ? "Welcome Back" : "Create Account";
 
-    document.getElementById("nameField").classList.toggle("hidden", isLogin);
+    document.getElementById("usernameField").classList.toggle("hidden", isLogin);
+    document.getElementById("loginUsernameField").classList.toggle("hidden", !isLogin);
     document.getElementById("loginHint").classList.toggle("hidden", !isLogin);
 
     document.querySelector("button[type='submit']").innerText =
@@ -166,27 +187,10 @@
 
     document.getElementById("switchText").innerText =
       isLogin ? "Don't have an account?" : "Already have an account?";
-  }
 
-  function submitAuth(e) {
-    e.preventDefault();
-
-    const name = document.getElementById("authName").value.trim();
-    const email = document.getElementById("authEmail").value.trim();
-    const password = document.getElementById("authPassword").value.trim();
-
-    if (!email || !password || (authMode === "signup" && !name)) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    alert(
-      authMode === "login"
-        ? `Logging in as ${email}`
-        : `Signing up ${name}`
-    );
-
-    closeAuthModal();
+   
+    const form = document.getElementById("authForm");
+    form.action = isLogin ? "/signin/" : "/signup/";
   }
 </script>
 

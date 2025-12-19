@@ -9,13 +9,15 @@ urlpatterns = [
     path("menu/", views.menu, name="menu"),
     path("menu_item/<int:pk>/", views.display_menu_item, name="menu_item"),
 
-    path("auth/", views.auth, name="auth"),
+    # Auth
+    path("signin/", views.signin_view, name="signin"),
+    path("signup/", views.signup_view, name="signup"),
+    path("logout/", views.logout_view, name="logout"),
 
+    # Orders
     path("orders/", views.ordersPage, name="ordersPage"),
-
     path("checkout/", views.checkout, name="checkout"),
     path("place-order/", views.place_order, name="place_order"),
-
     path(
         "order-confirmation/<int:order_id>/",
         views.order_confirmation,
