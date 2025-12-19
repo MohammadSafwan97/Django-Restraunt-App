@@ -1,105 +1,93 @@
-Safwan Restaurant – Django Food Ordering App
+🍽️ Safwan Restaurant – Django Food Ordering App
 
-This is a full-stack food ordering web application built using Django, Tailwind CSS, and Vanilla JavaScript.
-The project is developed as a portfolio project to practice backend development, frontend integration, and real-world application flow without frontend frameworks.
+A full-stack food ordering web application built with Django, Tailwind CSS, and Vanilla JavaScript.
+This project is part of my portfolio and focuses on building a real-world backend-driven application without using frontend frameworks.
 
-FEATURES
+🚧 Actively under development and continuously improving
+
+✨ Features
+
+User authentication (signup, login, logout)
+
+Modal-based authentication UI
 
 Browse restaurant menu
 
-Add and remove items from cart
+Add & remove items from cart
 
-Cart stored in browser using localStorage
+Cart persisted using browser localStorage
 
 Checkout flow with order creation
 
 Order confirmation page
 
-Orders management page
+User-specific orders page
 
-Django admin panel
+Django admin panel for management
 
-Responsive layout (mobile and desktop)
+Responsive design (mobile & desktop)
 
-Clean backend with real database models
+Clean relational database models
 
-TECH STACK
-
-Backend:
+🛠️ Tech Stack
+Backend
 
 Django
 
-SQLite (default database)
+SQLite (development)
+
+Django Authentication
 
 Django Admin
 
-Frontend:
+Frontend
 
-HTML (Django Templates)
+Django Templates (HTML)
 
 Tailwind CSS
 
 Vanilla JavaScript
 
-State Management:
+State Management
 
 Browser localStorage (cart)
 
-PROJECT STRUCTURE
-
+📁 Project Structure
 littlelemon/
+├── restaurant/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── admin.py
+│   ├── forms.py
+│
+├── templates/
+│   ├── base.html
+│   ├── pages/
+│   │   ├── menu.html
+│   │   ├── checkout.html
+│   │   ├── order_page.html
+│   │   └── order_confirmation.html
+│   └── partials/
+│       ├── header.html
+│       ├── cart_sidebar.html
+│       └── auth_modal.html
+│
+├── static/
+│   ├── js/
+│   │   ├── cart.js
+│   │   └── menu.js
+│   └── img/
+│
+├── manage.py
 
-restaurant/
+🔄 How the Application Works
 
-models.py
-
-views.py
-
-urls.py
-
-admin.py
-
-forms.py
-
-templates/
-
-base.html
-
-pages/
-
-menu.html
-
-checkout.html
-
-order_page.html
-
-order_confirmation.html
-
-partials/
-
-header.html
-
-cart_sidebar.html
-
-static/
-
-js/
-
-cart.js
-
-menu.js
-
-img/
-
-manage.py
-
-HOW THE APPLICATION WORKS
-
-User browses menu
+User browses the menu
 
 Items are added to cart (stored in localStorage)
 
-Checkout page reads cart from localStorage
+Checkout page reads cart data
 
 Order is submitted to Django backend
 
@@ -111,91 +99,74 @@ Order
 
 Order Items
 
-User is redirected to order confirmation page
+User is redirected to order confirmation
 
-Orders are visible on the Orders page and Admin panel
+Orders are visible on:
 
-SETUP INSTRUCTIONS
+Orders page
 
-Clone the repository:
-git clone <repository-url>
+Django Admin panel
+
+🚀 Setup Instructions
+git clone https://github.com/MohammadSafwan97/Django-Restraunt-App.git
 cd safwan-restaurant
 
-Create virtual environment:
 python -m venv venv
-venv\Scripts\activate (Windows)
-source venv/bin/activate (Mac/Linux)
+source venv/bin/activate  # Mac/Linux
+venv\Scripts\activate     # Windows
 
-Install Django:
 pip install django
-
-Run migrations:
 python manage.py migrate
-
-Create admin user:
 python manage.py createsuperuser
-
-Run the server:
 python manage.py runserver
 
-Open in browser:
-http://127.0.0.1:8000/
 
-ADMIN PANEL
+Open in browser:
+👉 http://127.0.0.1:8000/
+
+🔐 Admin Panel
 
 Admin URL:
-http://127.0.0.1:8000/admin/
+👉 http://127.0.0.1:8000/admin/
 
-Admin features:
+Admin capabilities:
 
 Manage menu items
 
-View orders
+View and update orders
 
-Update order status
+Manage users
 
-PROJECT GOALS & ROADMAP
+🚧 Project Status
 
-Current goals:
+Work in Progress
 
-Understand Django backend architecture
+This project is actively evolving as I:
 
-Practice frontend–backend integration
+Refactor code
 
-Build a complete ordering flow without frameworks
+Improve UX
 
-Learn cart and state management using Vanilla JavaScript
+Add new features
 
-Future goals:
+Apply backend best practices
+
+🎯 Roadmap
+
+Password reset & email verification
 
 Convert frontend to React
 
-Expose Django backend as REST API
+Expose backend as REST API (DRF)
 
-Implement user authentication
+Real payment gateway integration
 
-Link orders to logged-in users
+Improve mobile UX & animations
 
-Add real payment gateway integration
+Deploy to production
 
-Improve mobile UX and animations
-
-Implement real-time order tracking
-
-Deploy to production environment
-
-NOTES
-
-No frontend frameworks were used intentionally
-
-Cart logic is handled manually in JavaScript
-
-Project focuses on fundamentals and learning
-
-Built for portfolio and educational purposes
-
-AUTHOR
+👤 Author
 
 Safwan
 Computer Science Student
-Portfolio Project
+Portfolio Project – Django & Backend Development
